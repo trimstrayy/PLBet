@@ -1,0 +1,26 @@
+.pl-table-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #222;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  padding: 1rem;
+}
+.pl-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.pl-table th, .pl-table td {
+  padding: 0.5rem 1rem;
+  text-align: left;
+  color: #fff;
+}
+.pl-table th {
+  background: #333;
+  color: #fff;
+  font-weight: bold;
+}
+.pl-table tr:nth-child(even) {
+  background: #181818;
+}
