@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PremierLeagueTable from './PremierLeagueTable';
+// Logo size class for consistency
+const LOGO_CLASS = "w-8 h-8 object-contain mx-auto";
 import PredictionForm from './PredictionForm';
 import { calculateScore } from './scoreUtils';
 import { fetchPremierLeagueTable } from './fetchTable';
@@ -32,6 +34,8 @@ function App() {
   const [table, setTable] = useState(fallbackTable);
   const [predictions, setPredictions] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [logos, setLogos] = useState([]);
+  const [showLogosPage, setShowLogosPage] = useState(false);
 
   useEffect(() => {
     async function getTable() {
@@ -45,6 +49,18 @@ function App() {
     getTable();
   }, []);
 
+  async function handleShowLogosPage() {
+    setShowLogosPage(true);
+    try {
+      const liveTable = await fetchPremierLeagueTable();
+      if (liveTable && liveTable.length) {
+        setLogos(liveTable.map(entry => entry.team.crest));
+      }
+    } catch (err) {
+      setLogos([]);
+    }
+  }
+
   const handlePrediction = ({ user, predictions: userPred }) => {
     setPredictions(prev => {
       const filtered = prev.filter(p => p.user !== user);
@@ -53,10 +69,35 @@ function App() {
     setShowForm(false); // Hide form after submit
   };
 
+  if (showLogosPage) {
+    return (
+      <div className="max-w-2xl mx-auto p-6">
+        <h2 className="text-2xl font-bold text-center mb-6 text-blue-700">Premier League Club Logos</h2>
+        <div className="grid grid-cols-5 gap-6 my-4">
+          {logos.map((logo, idx) => (
+            <img key={idx} src={logo} alt={`Team ${idx + 1} logo`} className={LOGO_CLASS} />
+          ))}
+        </div>
+        <button
+          className="bg-gray-600 text-white px-4 py-2 rounded shadow mt-6"
+          onClick={() => setShowLogosPage(false)}
+        >
+          Back to Table
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-6 text-blue-700">Challenge</h1>
       <PremierLeagueTable table={table} />
+      <button
+        className="bg-blue-600 text-white px-4 py-2 rounded shadow mb-4"
+        onClick={handleShowLogosPage}
+      >
+        Show 20 Team Logos
+      </button>
+      {/* ...existing code... */}
       {!showForm && (
         <div className="text-center my-8">
           <button onClick={() => setShowForm(true)} className="px-6 py-3 text-lg rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">
